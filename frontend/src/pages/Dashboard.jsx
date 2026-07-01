@@ -33,8 +33,16 @@ function Dashboard({ onNavigate }) {
         { id: 'msg-init-1', chatId: 'chat-1', sender: 'bot', text: WELCOME_MESSAGE }
     ]);
 
-    // Socket.io
+    // Keep a ref in sync with activeChatId so handleSendMessage always reads the latest value
+    // without nesting setMessages inside setActiveChatId's updater (which caused double messages in Strict Mode)
+    const activeChatIdRef = useRef(activeChatId);
+    useEffect(() => { activeChatIdRef.current = activeChatId; }, [activeChatId]);
+
+    // ✅ FIX 1: Socket connects only AFTER user is authenticated so the JWT cookie is present.
+    // Previously it connected at mount before login, causing silent auth failure → no AI responses.
     useEffect(() => {
+        if (!user) return;
+
         const socket = io(SOCKET_URL, { transports: ['websocket'], reconnectionAttempts: 5, withCredentials: true });
         socketRef.current = socket;
         socket.on('receiveMessage', (data) => {
@@ -45,7 +53,7 @@ function Dashboard({ onNavigate }) {
             ]);
         });
         return () => socket.disconnect();
-    }, []);
+    }, [user]);
 
     // Load chat history
     useEffect(() => {
@@ -145,30 +153,30 @@ function Dashboard({ onNavigate }) {
         });
     }, []);
 
+    // ✅ FIX 2: Read activeChatId from ref directly — no longer nesting setMessages inside
+    // setActiveChatId's updater. React Strict Mode called that updater twice → double messages.
     const handleSendMessage = useCallback((e) => {
         e.preventDefault();
         if (!message.trim()) return;
         const userPrompt = message.trim();
+        const currentChatId = activeChatIdRef.current;
         setMessage('');
-        setActiveChatId((currentChatId) => {
-            setChats((prevChats) =>
-                prevChats.map((chat) => {
-                    if (chat.id === currentChatId && chat.title === 'New Chat') {
-                        return { ...chat, title: userPrompt.length > 28 ? userPrompt.substring(0, 25) + '...' : userPrompt };
-                    }
-                    return chat;
-                })
-            );
-            setMessages((prev) => [...prev, { id: 'msg-user-' + Date.now(), chatId: currentChatId, sender: 'user', text: userPrompt }]);
-            setIsAiTyping(true);
-            socketRef.current?.emit('sendMessage', {
-                text: userPrompt,
-                sender: user?.username || user?.email || 'Guest',
-                chatId: currentChatId,
-                persona: systemPersona,
-                temperature: aiTemperature
-            });
-            return currentChatId;
+        setChats((prevChats) =>
+            prevChats.map((chat) => {
+                if (chat.id === currentChatId && chat.title === 'New Chat') {
+                    return { ...chat, title: userPrompt.length > 28 ? userPrompt.substring(0, 25) + '...' : userPrompt };
+                }
+                return chat;
+            })
+        );
+        setMessages((prev) => [...prev, { id: 'msg-user-' + Date.now(), chatId: currentChatId, sender: 'user', text: userPrompt }]);
+        setIsAiTyping(true);
+        socketRef.current?.emit('sendMessage', {
+            text: userPrompt,
+            sender: user?.username || user?.email || 'Guest',
+            chatId: currentChatId,
+            persona: systemPersona,
+            temperature: aiTemperature
         });
     }, [message, user, systemPersona, aiTemperature]);
 

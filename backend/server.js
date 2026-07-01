@@ -4,7 +4,21 @@ const cors = require('cors');
 const http = require('http');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const mongoSanitize = require('express-mongo-sanitize');
+// Custom MongoDB injection sanitizer (express-mongo-sanitize is incompatible with Express 5)
+const sanitizeValue = (val) => {
+    if (val && typeof val === 'object' && !Array.isArray(val)) {
+        return Object.fromEntries(
+            Object.entries(val)
+                .filter(([k]) => !k.startsWith('$'))
+                .map(([k, v]) => [k, sanitizeValue(v)])
+        );
+    }
+    return val;
+};
+const mongoSanitize = (req, res, next) => {
+    if (req.body) req.body = sanitizeValue(req.body);
+    next();
+};
 const { Server } = require('socket.io');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const jwt = require('jsonwebtoken');
@@ -50,8 +64,8 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: '10kb' })); // Prevent large payload attacks
 app.use(cookieParser());
 
-// 🛡️ MongoDB Injection Prevention
-app.use(mongoSanitize());
+// 🛡️ MongoDB Injection Prevention (custom — compatible with Express 5)
+app.use(mongoSanitize);
 
 const server = http.createServer(app);
 
@@ -148,7 +162,7 @@ io.on('connection', (socket) => {
 
             // Gemini AI
             const aiModel = aiProvider.getGenerativeModel({
-                model: 'gemini-1.5-flash',
+                model: 'gemini-2.5-flash',
                 generationConfig: { temperature: temperature },
                 systemInstruction: { parts: [{ text: `You are a ${persona} persona. Respond in a style that fits this persona perfectly.` }] }
             });
