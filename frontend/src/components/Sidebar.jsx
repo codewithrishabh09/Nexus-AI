@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Share2, Plus, MessageSquare, Trash2, Settings, HelpCircle, LogOut, X, Pencil, Check } from 'lucide-react';
+import { Share2, Plus, MessageSquare, Trash2, Settings, HelpCircle, LogOut, PanelLeftClose, Pencil, Check } from 'lucide-react';
 
 function Sidebar({
     sidebarOpen,
@@ -56,8 +56,13 @@ function Sidebar({
                     </div>
                     <span className="font-bold text-sm tracking-[0.12em] text-white">NEXUS AI</span>
                 </div>
-                <button onClick={() => setSidebarOpen(false)} className="p-1.5 hover:bg-[#2a1040] rounded-lg transition-colors cursor-pointer md:hidden">
-                    <X className="h-4 w-4 text-gray-400" />
+                {/* ✅ Toggle button — always visible, closes the sidebar */}
+                <button
+                    onClick={() => setSidebarOpen(false)}
+                    title="Close sidebar"
+                    className="p-1.5 hover:bg-[#2a1040] border border-transparent hover:border-[#3d1a5e] rounded-lg transition-all duration-200 cursor-pointer text-gray-400 hover:text-pink-400"
+                >
+                    <PanelLeftClose className="h-4 w-4" />
                 </button>
             </div>
 

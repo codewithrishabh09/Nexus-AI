@@ -153,8 +153,6 @@ function Dashboard({ onNavigate }) {
         });
     }, []);
 
-    // ✅ FIX 2: Read activeChatId from ref directly — no longer nesting setMessages inside
-    // setActiveChatId's updater. React Strict Mode called that updater twice → double messages.
     const handleSendMessage = useCallback((e) => {
         e.preventDefault();
         if (!message.trim()) return;
