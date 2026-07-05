@@ -91,7 +91,7 @@ app.get('/', (req, res) => {
 });
 
 // 🗄️ MongoDB
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI || process.env.MONGO_URI)
     .then(() => console.log("✅ MongoDB Atlas Connected!"))
     .catch((err) => console.error("❌ MongoDB Failed:", err.message));
 
