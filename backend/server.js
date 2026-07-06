@@ -23,7 +23,7 @@ const { Server } = require('socket.io');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
-// require('dotenv').config();
+require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
 const chatRoutes = require('./routes/chatRoutes');
@@ -91,7 +91,7 @@ app.get('/', (req, res) => {
 });
 
 // 🗄️ MongoDB
-mongoose.connect(process.env.MONGO_URI || process.env.MONGO_URI)
+mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI)
     .then(() => console.log("✅ MongoDB Atlas Connected!"))
     .catch((err) => console.error("❌ MongoDB Failed:", err.message));
 
