@@ -18,10 +18,10 @@ function Login({ onNavigate }) {
         setLoading(true);
         setErrorMessage('');
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const response = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
                 body: JSON.stringify({ email, password })
             });
             const data = await response.json();
@@ -29,7 +29,7 @@ function Login({ onNavigate }) {
                 setErrorMessage(data.message || 'Login failed. Please try again.');
                 return;
             }
-            loginSession(data.user);
+            loginSession(data.user, data.token);
             onNavigate('/dashboard');
         } catch {
             setErrorMessage('Unable to connect to server. Please try again.');
@@ -40,13 +40,9 @@ function Login({ onNavigate }) {
 
     return (
         <div className="min-h-screen w-screen bg-[#0a0010] flex items-center justify-center p-4 relative">
-            {/* Background glows */}
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(168,85,247,0.12),transparent_60%)]" />
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(236,72,153,0.08),transparent_60%)]" />
-
             <div className="w-full max-w-md bg-[#0f0015] border border-[#2a1040] rounded-2xl p-6 md:p-8 shadow-2xl relative z-10">
-
-                {/* Brand Identity */}
                 <div className="flex flex-col items-center mb-8">
                     <div className="h-12 w-12 rounded-xl bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center shadow-[0_0_25px_rgba(236,72,153,0.3)] mb-4">
                         <Share2 className="h-6 w-6 text-white stroke-[2.5]" />
@@ -67,37 +63,24 @@ function Login({ onNavigate }) {
                         <label className="text-[10px] uppercase font-bold tracking-wider text-purple-400/60">Email Address</label>
                         <div className="relative flex items-center bg-[#0a0010] border border-[#2a1040] rounded-xl focus-within:border-pink-500/50 transition-colors">
                             <Mail className="absolute left-3.5 h-4 w-4 text-purple-500/50" />
-                            <input
-                                type="email"
-                                required
+                            <input type="email" required
                                 className="w-full py-3.5 pl-11 pr-4 bg-transparent text-gray-100 text-sm focus:outline-none placeholder-gray-700 font-sans"
-                                placeholder="developer@nexus.io"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
+                                placeholder="developer@nexus.io" value={email}
+                                onChange={(e) => setEmail(e.target.value)} />
                         </div>
                     </div>
-
                     <div className="space-y-1.5">
                         <label className="text-[10px] uppercase font-bold tracking-wider text-purple-400/60">Password</label>
                         <div className="relative flex items-center bg-[#0a0010] border border-[#2a1040] rounded-xl focus-within:border-pink-500/50 transition-colors">
                             <Key className="absolute left-3.5 h-4 w-4 text-purple-500/50" />
-                            <input
-                                type="password"
-                                required
+                            <input type="password" required
                                 className="w-full py-3.5 pl-11 pr-4 bg-transparent text-gray-100 text-sm focus:outline-none placeholder-gray-700"
-                                placeholder="••••••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
+                                placeholder="••••••••••••" value={password}
+                                onChange={(e) => setPassword(e.target.value)} />
                         </div>
                     </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full mt-6 py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 disabled:opacity-50 text-white font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(236,72,153,0.2)] cursor-pointer"
-                    >
+                    <button type="submit" disabled={loading}
+                        className="w-full mt-6 py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 disabled:opacity-50 text-white font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(236,72,153,0.2)] cursor-pointer">
                         {loading ? (
                             <span className="flex items-center gap-2">
                                 <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
