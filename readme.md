@@ -80,16 +80,6 @@ cd backend
 npm install
 ```
 
-Create `backend/.env` file:
-
-```env
-PORT=5000
-MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/nexusai
-JWT_SECRET=your_strong_secret_key_here
-GEMINI_API_KEY=your_gemini_api_key_here
-FRONTEND_URL=http://localhost:5173
-```
-
 ### 3. Frontend Setup
 
 ```bash

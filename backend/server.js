@@ -103,6 +103,11 @@ const SOCKET_WINDOW_MS = 60000; // per minute
 io.use((socket, next) => {
     try {
         const cookieHeader = socket.handshake.headers.cookie;
+        const origin = socket.handshake.headers.origin;
+
+        // 🔍 DEBUG — remove after confirming cookies arrive correctly
+        console.log(`🔌 Socket handshake | origin: ${origin} | cookie: ${cookieHeader ?? '⚠️  NONE'}`);
+
         if (!cookieHeader) return next(new Error('Authentication error: No cookies'));
 
         const cookies = {};
@@ -112,10 +117,16 @@ io.use((socket, next) => {
         });
 
         const token = cookies.nexus_token;
-        if (!token) return next(new Error('Authentication error: Token missing'));
+        if (!token) {
+            console.log('🔍 Cookie keys present:', Object.keys(cookies));
+            return next(new Error('Authentication error: Token missing'));
+        }
 
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-            if (err) return next(new Error('Authentication error: Invalid token'));
+            if (err) {
+                console.error('🔍 JWT verify error:', err.message);
+                return next(new Error('Authentication error: Invalid token'));
+            }
             socket.user = decoded;
             next();
         });

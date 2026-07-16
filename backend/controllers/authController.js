@@ -7,8 +7,8 @@ const jwt = require('jsonwebtoken');
 
 const cookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: process.env.NODE_ENV === 'production', // false on localhost (http)
+    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', // 'strict' blocks cross-origin cookies on localhost
     maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
 };
 

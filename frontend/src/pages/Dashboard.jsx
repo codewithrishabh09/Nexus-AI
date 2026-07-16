@@ -43,8 +43,26 @@ function Dashboard({ onNavigate }) {
     useEffect(() => {
         if (!user) return;
 
-        const socket = io(SOCKET_URL, { transports: ['websocket'], reconnectionAttempts: 5, withCredentials: true });
+        const socket = io(SOCKET_URL, {
+            // ✅ FIX: Do NOT force 'websocket' only — Socket.io needs the initial HTTP
+            // polling handshake to negotiate & upgrade to WebSocket (101 Switching Protocols).
+            // Forcing ['websocket'] skips that handshake → connection refused.
+            withCredentials: true,
+            reconnectionAttempts: 5,
+        });
         socketRef.current = socket;
+
+        socket.on('connect', () => {
+            console.log('✅ Socket connected:', socket.id);
+        });
+        socket.on('connect_error', (err) => {
+            console.error('❌ Socket connect_error:', err.message);
+            setIsAiTyping(false);
+        });
+        socket.on('error', (err) => {
+            console.error('❌ Socket error:', err);
+            setIsAiTyping(false);
+        });
         socket.on('receiveMessage', (data) => {
             setIsAiTyping(false);
             setMessages((prev) => [
@@ -293,7 +311,7 @@ function Dashboard({ onNavigate }) {
                     </form>
 
                     <p className="text-center text-[10px] text-purple-900 mt-3 tracking-wider uppercase">
-                        Engineered by DevOrbit Hub &bull; Operational Node v4.0.0
+                        Engineered by Rishabh Dwivedi &bull; Operational Node v4.0.0
                     </p>
                 </footer>
             </div>
