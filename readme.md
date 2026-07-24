@@ -1,5 +1,52 @@
 # 🚀 NEXUS AI — Intelligent Chatbot Platform
 
+## 🚀 Running with Docker (Recommended)
+
+This project is fully dockerized — no need to manually run frontend and backend in separate terminals.
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) installed
+- Docker Compose v2 (comes bundled with modern Docker installs)
+
+### Setup
+
+1. Clone the repo:
+
+```bash
+   git clone <your-repo-url>
+   cd AI-Chatbot
+```
+
+1. Create your `.env` files:
+   - Copy `backend/.env.example` → `backend/.env` and fill in your values
+   - Copy `frontend/.env.example` → `frontend/.env` and fill in your values
+
+2. Run the entire app with one command:
+
+```bash
+   npm run start
+```
+
+1. Once it's running, open:
+   - **Frontend**: <http://localhost:5173>
+   - **Backend**: <http://localhost:5000>
+
+### Common commands
+
+| Action | Command |
+| Start the app | `docker compose up --build` |
+| Start in background | `docker compose up --build -d` |
+| Stop the app | `docker compose down` |
+| View logs (if running in background) | `docker compose logs -f` |
+| Rebuild after adding a new npm package | `docker compose up --build` |
+
+### Troubleshooting
+
+- **Permission denied on docker.sock (Linux)**: run `sudo usermod -aG docker $USER`, then log out and back in.
+- **Port already in use**: make sure nothing else on your machine is using port `5000` or `5173`.
+Changes not reflecting**: the containers use live-reload via volumes, but if something seems stuck, run `docker compose up --build` again.
+
 > A production-grade AI chatbot powered by **Gemini 1.5 Flash**, **MongoDB Atlas**, **Socket.io**, and **React**.
 
 ![Version](https://img.shields.io/badge/version-4.0.0-pink)
