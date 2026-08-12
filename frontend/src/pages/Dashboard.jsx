@@ -13,7 +13,7 @@ import ProfileModal from '../components/ProfileModal';
 import MessageItem from '../components/MessageItem';
 import PaymentModal from '../components/PaymentModal';
 
-const SOCKET_URL = import.meta.env.VITE_API_URL;
+const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const WELCOME_MESSAGE = `<nexus-welcome></nexus-welcome>`;
 
 // ─── Animated background ─────────────────────────────────────────────────────
@@ -253,7 +253,7 @@ function Dashboard({ onNavigate }) {
             e.preventDefault();
         }
         
-        // Paywall check at the absolute start
+        // Restore the previous payment gate: block chat until the user unlocks premium.
         if (!isPremium && !forceSend) {
             setPaymentModalOpen(true);
             return; // stop right here — do not proceed to any API call, socket emit, or message append below

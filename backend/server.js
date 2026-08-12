@@ -27,6 +27,7 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 const Message = require('./models/Message');
 
 const app = express();
@@ -86,6 +87,7 @@ const aiProvider = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 // 🛣️ Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/payment', paymentRoutes);
 app.get('/', (req, res) => {
     res.json({ success: true, message: "Nexus AI Backend running!", version: "4.0.0" });
 });

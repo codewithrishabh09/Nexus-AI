@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, Mail, Lock, MessageSquare, Shield, Eye, EyeOff, Check, AlertCircle } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function ProfileModal({ isOpen, onClose, user, messages }) {
     const [activeTab, setActiveTab] = useState('profile');
     const [currentPassword, setCurrentPassword] = useState('');
@@ -28,7 +30,7 @@ function ProfileModal({ isOpen, onClose, user, messages }) {
         if (newPassword !== confirmPassword) { setPwError('New passwords do not match.'); return; }
         setPwLoading(true);
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/change-password`, {
+            const response = await fetch(`${API_URL}/api/auth/change-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

@@ -3,10 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Check, Lock, CreditCard, ArrowLeft } from 'lucide-react';
 import NexusLogo from './NexusLogo';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 function PaymentModal({ isOpen, onClose, onSuccess }) {
     const [step, setStep] = useState('plan'); // 'plan', 'checkout', 'success'
     const [plan, setPlan] = useState('monthly'); // 'monthly', 'annual'
     const [isProcessing, setIsProcessing] = useState(false);
+    const [paymentError, setPaymentError] = useState('');
 
     // Form states for demo purposes
     const [cardNumber, setCardNumber] = useState('');
@@ -22,21 +25,40 @@ function PaymentModal({ isOpen, onClose, onSuccess }) {
         setExpiry('');
         setCvv('');
         setCardName('');
+        setPaymentError('');
         onClose();
     };
 
-    const handlePayment = (e) => {
+    const handlePayment = async (e) => {
         e.preventDefault();
         setIsProcessing(true);
-        // TODO: Replace with real payment gateway (Razorpay/Stripe) later
-        setTimeout(() => {
+        setPaymentError('');
+        try {
+            const response = await fetch(`${API_URL}/api/payment/validate`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ cardNumber })
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || 'Invalid Card Number');
+            }
+
             setIsProcessing(false);
             setStep('success');
             setTimeout(() => {
                 handleClose();
                 onSuccess();
             }, 2000);
-        }, 2000);
+        } catch (error) {
+            setIsProcessing(false);
+            setPaymentError(error.message || 'Payment validation failed');
+        }
     };
 
     if (!isOpen) return null;
@@ -179,6 +201,12 @@ function PaymentModal({ isOpen, onClose, onSuccess }) {
                                         </div>
 
                                         <form onSubmit={handlePayment} className="space-y-3">
+                                            {paymentError && (
+                                                <div className="p-3 rounded-xl text-left text-xs"
+                                                    style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', color: '#F87171' }}>
+                                                    {paymentError}
+                                                </div>
+                                            )}
                                             <div className="space-y-1.5">
                                                 <label className="text-[9px] uppercase font-semibold tracking-widest" style={{ color: '#71717A' }}>Card Number</label>
                                                 <div className="relative flex items-center rounded-xl transition-all"
