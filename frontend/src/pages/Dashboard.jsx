@@ -12,8 +12,9 @@ import SettingsModal from '../components/SettingsModal';
 import ProfileModal from '../components/ProfileModal';
 import MessageItem from '../components/MessageItem';
 import PaymentModal from '../components/PaymentModal';
+import { getApiUrl } from '../utils/api';
 
-const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const SOCKET_URL = getApiUrl();
 const WELCOME_MESSAGE = `<nexus-welcome></nexus-welcome>`;
 
 // ─── Animated background ─────────────────────────────────────────────────────

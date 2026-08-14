@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { Mail, Lock, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { getApiUrl } from '../utils/api';
 
 function NexusLogo() {
     return (
@@ -27,7 +28,7 @@ function Login({ onNavigate }) {
         if (!email.trim() || !password.trim()) { setErrorMessage('Please fill in all credential fields.'); return; }
         setLoading(true); setErrorMessage('');
         try {
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const API_URL = getApiUrl();
             const response = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

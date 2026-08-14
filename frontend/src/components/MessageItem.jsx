@@ -138,9 +138,7 @@ function NexusWelcomeCard({ onPromptClick }) {
             {/* ── Status footer ── */}
             <div className="flex items-center justify-center gap-4 mt-8">
                 {[
-                    { dot: '#3B82F6', label: 'Gemini 2.5 Flash' },
-                    { dot: '#10B981', label: 'MongoDB Atlas' },
-                    { dot: '#8B5CF6', label: 'Socket.io Live' },
+                    
                 ].map(({ dot, label }) => (
                     <div key={label} className="flex items-center gap-1.5">
                         <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: dot, opacity: 0.7 }} />

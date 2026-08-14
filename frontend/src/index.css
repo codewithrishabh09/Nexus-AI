@@ -14,6 +14,22 @@ html, body, #root {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+body {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+input,
+textarea,
+button {
+  font: inherit;
+}
+
 /* ─── Custom Scrollbar ─── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -80,3 +96,22 @@ html, body, #root {
 /* ─── Range input reset ─── */
 input[type="range"] { -webkit-appearance: none; appearance: none; background: transparent; }
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; }
+
+@media (max-width: 768px) {
+  html, body, #root {
+    overflow: hidden;
+  }
+
+  .mobile-stack {
+    flex-direction: column !important;
+  }
+
+  .mobile-full {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .mobile-hide {
+    display: none !important;
+  }
+}

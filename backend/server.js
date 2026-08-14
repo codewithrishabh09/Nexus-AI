@@ -53,15 +53,35 @@ const authLimiter = rateLimit({
 });
 app.use('/api/auth/', authLimiter);
 
-// 🛡️ CORS — only allow frontend
-const corsOptions = {
-    origin: process.env.FRONTEND_URL
+const allowedOrigins = new Set(
+    (process.env.FRONTEND_URL
         ? process.env.FRONTEND_URL.split(',')
-        : ['http://localhost:5173', 'http://localhost:3000'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true
+        : [
+            'http://localhost:5173',
+            'http://localhost:3000',
+            'http://127.0.0.1:5173',
+            'http://127.0.0.1:3000',
+        ])
+        .map((origin) => origin.trim())
+        .filter(Boolean)
+);
+
+const isAllowedOrigin = (origin) => {
+    if (!origin) return true;
+    if (allowedOrigins.has(origin)) return true;
+    return /^http:\/\/192\.168\.\d{1,3}\.\d{1,3}(:\d+)?$/.test(origin) ||
+        /^http:\/\/10\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d+)?$/.test(origin) ||
+        /^http:\/\/172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}(:\d+)?$/.test(origin);
 };
-app.use(cors(corsOptions));
+
+app.use(cors({
+    origin(origin, callback) {
+        if (isAllowedOrigin(origin)) return callback(null, true);
+        callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    credentials: true
+}));
 app.use(express.json({ limit: '10kb' })); // Prevent large payload attacks
 app.use(cookieParser());
 
@@ -73,9 +93,10 @@ const server = http.createServer(app);
 // 🔌 Socket.io
 const io = new Server(server, {
     cors: {
-        origin: process.env.FRONTEND_URL
-            ? process.env.FRONTEND_URL.split(',')
-            : ['http://localhost:5173', 'http://localhost:3000'],
+        origin: (origin, callback) => {
+            if (isAllowedOrigin(origin)) return callback(null, true);
+            callback(new Error(`Socket CORS blocked for origin: ${origin}`));
+        },
         methods: ['GET', 'POST'],
         credentials: true
     }

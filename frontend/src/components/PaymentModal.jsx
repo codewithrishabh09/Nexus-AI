@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Check, Lock, CreditCard, ArrowLeft } from 'lucide-react';
 import NexusLogo from './NexusLogo';
+import { getApiUrl } from '../utils/api';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = getApiUrl();
 
 function PaymentModal({ isOpen, onClose, onSuccess }) {
     const [step, setStep] = useState('plan'); // 'plan', 'checkout', 'success'

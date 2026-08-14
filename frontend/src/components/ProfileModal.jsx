@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, Mail, Lock, MessageSquare, Shield, Eye, EyeOff, Check, AlertCircle } from 'lucide-react';
+import { getApiUrl } from '../utils/api';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = getApiUrl();
 
 function ProfileModal({ isOpen, onClose, user, messages }) {
     const [activeTab, setActiveTab] = useState('profile');
