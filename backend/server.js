@@ -75,10 +75,7 @@ const isAllowedOrigin = (origin) => {
 };
 
 app.use(cors({
-    origin(origin, callback) {
-        if (isAllowedOrigin(origin)) return callback(null, true);
-        callback(new Error(`CORS blocked for origin: ${origin}`));
-    },
+    origin: ['http://nexus-ai-chatbot-frontend.onrender.com', 'http://localhost:5173'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true
 }));
@@ -114,10 +111,22 @@ app.get('/', (req, res) => {
 });
 
 // 🗄️ MongoDB
-mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI)
-    .then(() => console.log("✅ MongoDB Atlas Connected!"))
-    .catch((err) => console.error("❌ MongoDB Failed:", err.message));
+const mongoURI = process.env.MONGODB_URI || process.env.MONGO_URI;
+console.log("🔗 Attempting to connect to MongoDB...");
+console.log("📍 Connection string (first 50 chars):", mongoURI?.substring(0, 50) + "...");
 
+mongoose.connect(mongoURI, {
+    serverSelectionTimeoutMS: 10000,
+    socketTimeoutMS: 45000,
+})
+    .then(() => {
+        console.log("✅ MongoDB Atlas Connected Successfully!");
+    })
+    .catch((err) => {
+        console.error("❌ MongoDB Connection Failed!");
+        console.error("Error Message:", err.message);
+    });
+    
 // 🛡️ Socket rate limiting — prevent infinite spam/loops
 const socketMessageCount = new Map();
 const SOCKET_MSG_LIMIT = 20;    // 20 messages
