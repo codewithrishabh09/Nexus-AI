@@ -154,35 +154,25 @@ npm run dev
 
 <!-- http://localhost:5173 -->
 
-## 🔑 Environment Variables
-
-### Backend `.env`
-
-| Variable | Description |
-| `PORT` | Server port (default: 5000) |
-| `MONGO_URI` | MongoDB Atlas connection string |
-| `JWT_SECRET` | Strong random secret for JWT signing |
-| `GEMINI_API_KEY` | Google AI Studio API key |
-| `FRONTEND_URL` | Frontend URL for CORS (comma separated for multiple) |
-
-> ⚠️ **NEVER commit `.env` to GitHub!** It's already in `.gitignore`.
-
----
-
 ## 🛡️ Security Features
 
-### 1. API Keys Protection
+- NEXUS AI includes multiple layers of security.
 
-- All keys stored in `.env` — never in code
-- `.env` is in `.gitignore` — never pushed to GitHub
-- Frontend uses hardcoded localhost URL (change before deploy)
+### 1. 🔑 API Key Protection
 
-### 2. Authentication Security
+- API keys are stored inside .env
+- Secrets are not hardcoded into source code
+- .env is included in .gitignore
+- Production secrets should be configured through deployment environment variables
 
-- Passwords hashed with **bcryptjs** (10 salt rounds)
-- JWT tokens expire in **30 days**
-- Auth routes have **strict rate limiting** (10 requests per 15 min)
-- Protected routes require valid JWT via `authMiddleware`
+### 2. 🔐 Authentication Security
+
+- Passwords are hashed using bcryptjs
+- JWT-based authentication
+- JWT tokens expire after 30 days
+- Authentication routes use strict rate limiting
+- Protected routes require valid authentication
+- Authentication cookies use secure configuration
 
 ### 3. API Rate Limiting
 
@@ -282,6 +272,27 @@ git status
 **DevOrbit Hub** — Operational Node v4.0.0
 
 ---
+
+## 📈 Future Roadmap
+
+- NEXUS AI is an evolving project.
+- The goal is to continuously improve the platform as AI technology evolves.
+
+**Planned Improvements**.
+
+- 🤖 Advanced AI capabilities
+- 🧠 Improved conversational context
+- 🔎 Better context management
+- ⚡ Further real-time performance improvements
+- 🛡️ Stronger production security
+- 📊 Monitoring and observability
+- 🧩 Additional AI-powered features
+- ☁️ More production-ready infrastructure
+- 🚀 Better scalability
+- 💬 Improved conversation management
+- 🧠 More intelligent AI workflows
+
+- This is just the beginning. NEXUS AI will continue to evolve with the rapidly changing AI era. 🤖🚀
 
 ## 📄 License
 
