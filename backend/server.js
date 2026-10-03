@@ -75,10 +75,17 @@ const isAllowedOrigin = (origin) => {
 };
 
 app.use(cors({
-    origin: ['http://nexus-ai-chatbot-frontend.onrender.com', 'http://localhost:5173'],
+    origin: (origin, callback) => {
+        if (isAllowedOrigin(origin)) {
+            return callback(null, true);
+        }
+
+        callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true
 }));
+
 app.use(express.json({ limit: '10kb' })); // Prevent large payload attacks
 app.use(cookieParser());
 
