@@ -36,7 +36,7 @@ function Register({ onNavigate }) {
                 setErrorMessage(data.message || 'Registration failed. Please try again.');
                 return;
             }
-            loginSession(data.user, data.token);
+            loginSession(data.user)
             onNavigate('/dashboard');
         } catch {
             setErrorMessage('Unable to connect to server. Please try again.');

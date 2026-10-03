@@ -9,26 +9,47 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                const res = await fetch(`${API_URL}/api/auth/me`, {
-                    credentials: 'include'
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.success) {
-                        setUser(data.user);
-                    }
+useEffect(() => {
+    const checkAuth = async () => {
+        try {
+            const res = await fetch(`${API_URL}/api/auth/me`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/json'
                 }
-            } catch (err) {
-                console.error("Auth check failed");
-            } finally {
-                setLoading(false);
+            });
+
+            if (!res.ok) {
+                if (res.status === 401) {
+                    console.warn('🔐 No valid authentication session found.');
+                } else {
+                    console.error(`❌ Auth check failed with status: ${res.status}`);
+                }
+
+                setUser(null);
+                return;
             }
-        };
-        checkAuth();
-    }, []);
+
+            const data = await res.json();
+
+            if (data.success && data.user) {
+                console.log('✅ Authentication session restored:', data.user.email);
+                setUser(data.user);
+            } else {
+                setUser(null);
+            }
+
+        } catch (err) {
+            console.error('❌ Auth check request failed:', err);
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    checkAuth();
+}, []);
 
     const loginSession = (userData) => {
         setUser(userData);

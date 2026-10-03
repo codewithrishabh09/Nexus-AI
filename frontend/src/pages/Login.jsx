@@ -36,8 +36,12 @@ function Login({ onNavigate }) {
                 body: JSON.stringify({ email, password })
             });
             const data = await response.json();
-            if (!response.ok) { setErrorMessage(data.message || 'Login failed. Please try again.'); return; }
-            loginSession(data.user, data.token);
+            if (!response.ok) {
+                setErrorMessage(data.message || 'Login failed. Please try again.');
+                return;
+            }
+
+            loginSession(data.user);
             onNavigate('/dashboard');
         } catch { setErrorMessage('Unable to connect to server. Please try again.'); }
         finally { setLoading(false); }

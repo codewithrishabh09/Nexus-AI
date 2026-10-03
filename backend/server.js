@@ -75,13 +75,7 @@ const isAllowedOrigin = (origin) => {
 };
 
 app.use(cors({
-    origin: (origin, callback) => {
-        if (isAllowedOrigin(origin)) {
-            return callback(null, true);
-        }
-
-        callback(new Error(`CORS blocked for origin: ${origin}`));
-    },
+    origin: ['http://nexus-ai-chatbot-frontend.onrender.com', 'http://localhost:5173'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true
 }));
